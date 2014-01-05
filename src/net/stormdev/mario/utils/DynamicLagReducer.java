@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import net.stormdev.mario.mariokart.Race;
-import net.stormdev.mario.mariokart.main;
+import net.stormdev.mario.mariokart.MarioKart;
 
 public class DynamicLagReducer implements Runnable {
 	public static int TICK_COUNT = 0;
@@ -33,23 +33,23 @@ public class DynamicLagReducer implements Runnable {
 			System.gc();
 			freeMemory = (long) (Runtime.getRuntime().freeMemory() * 0.00097560975 * 0.00097560975); //In MB
 			if(freeMemory < 150){
-				if(!main.plugin.raceScheduler.isLockedDown()){
-					main.plugin.raceScheduler.lockdown(); //Lock all queues
+				if(!MarioKart.plugin.raceScheduler.isLockedDown()){
+					MarioKart.plugin.raceScheduler.lockdown(); //Lock all queues
 				}
 				else{
 					//Re-occuring issue
-					if(main.plugin.random.nextBoolean() && main.plugin.random.nextBoolean()
-							&& main.plugin.random.nextBoolean()){ //Small chance races will get cancelled
-						if(main.plugin.raceScheduler.getRacesRunning() > 0){
+					if(MarioKart.plugin.random.nextBoolean() && MarioKart.plugin.random.nextBoolean()
+							&& MarioKart.plugin.random.nextBoolean()){ //Small chance races will get cancelled
+						if(MarioKart.plugin.raceScheduler.getRacesRunning() > 0){
 							//Terminate a race
 							try {
-								HashMap<UUID, Race> races = new HashMap<UUID, Race>(main.plugin.raceScheduler.getRaces());
+								HashMap<UUID, Race> races = new HashMap<UUID, Race>(MarioKart.plugin.raceScheduler.getRaces());
 								Object[] ids = races.keySet().toArray();
-								UUID id = (UUID) ids[main.plugin.random.nextInt(ids.length)];
+								UUID id = (UUID) ids[MarioKart.plugin.random.nextInt(ids.length)];
 								Race r = races.get(id);
-								r.broadcast(main.colors.getError()+"Terminating race due to depleted system resources, sorry.");
-								main.plugin.raceScheduler.stopRace(r);
-								main.logger.info("[WARNING] Low memory resulted in termination of race: "
+								r.broadcast(MarioKart.colors.getError()+"Terminating race due to depleted system resources, sorry.");
+								MarioKart.plugin.raceScheduler.stopRace(r);
+								MarioKart.getInstance().getLogger().info("[WARNING] Low memory resulted in termination of race: "
 										+ id);
 							} catch (Exception e) {
 								//Error ending race
@@ -61,9 +61,9 @@ public class DynamicLagReducer implements Runnable {
 			}
 		}
 		else{
-			if(main.plugin.raceScheduler.isLockedDown() &&
+			if(MarioKart.plugin.raceScheduler.isLockedDown() &&
 					freeMemory > 200){
-				main.plugin.raceScheduler.unlockDown();
+				MarioKart.plugin.raceScheduler.unlockDown();
 			}
 		}
 		return false;

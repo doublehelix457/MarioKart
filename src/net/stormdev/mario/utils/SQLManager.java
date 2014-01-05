@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.stormdev.mario.mariokart.main;
+import net.stormdev.mario.mariokart.MarioKart;
 import code.husky.mysql.MySQL;
 
 public class SQLManager {
@@ -17,14 +17,14 @@ public class SQLManager {
 
 	public SQLManager(String hostName, String port, String dbName,
 			String username, String password) {
-		main.logger.info("Connecting to mySQL database...");
+		MarioKart.getInstance().getLogger().info("Connecting to mySQL database...");
 		try {
-			MySQL = new MySQL(main.plugin, hostName, port, dbName, username,
+			MySQL = new MySQL(MarioKart.plugin, hostName, port, dbName, username,
 					password);
 			c = MySQL.openConnection();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
-			main.logger.info("Error connecting to mySQL database!");
+			MarioKart.getInstance().getLogger().info("Error connecting to mySQL database!");
 		}
 	}
 
@@ -32,7 +32,7 @@ public class SQLManager {
 		try {
 			c.close();
 		} catch (SQLException e) {
-			main.logger.info("Error occured when closing sql connection!");
+			MarioKart.getInstance().getLogger().info("Error occured when closing sql connection!");
 		}
 		if(MySQL != null){
 			MySQL.closeConnection();
@@ -150,8 +150,8 @@ public class SQLManager {
 			statement.executeUpdate(query);
 			statement.close();
 		} catch (SQLException e) {
-			main.logger.info(main.colors.getError() + "Query: " + query);
-			main.logger.info(main.colors.getError() + "Error: "
+			MarioKart.getInstance().getLogger().info(MarioKart.colors.getError() + "Query: " + query);
+			MarioKart.getInstance().getLogger().info(MarioKart.colors.getError() + "Error: "
 					+ e.getMessage());
 		}
 	}

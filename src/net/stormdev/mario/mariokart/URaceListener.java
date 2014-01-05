@@ -65,9 +65,9 @@ import com.useful.ucars.ucars;
 import com.useful.ucarsCommon.StatValue;
 
 public class URaceListener implements Listener {
-	main plugin = null;
+	MarioKart plugin = null;
 
-	public URaceListener(main plugin) {
+	public URaceListener(MarioKart plugin) {
 		this.plugin = plugin;
 	}
 
@@ -85,10 +85,10 @@ public class URaceListener implements Listener {
 		if (plugin.raceMethods.inAGame(player, false) == null) {
 			return;
 		}
-		if (ItemStackFromId.equals(main.config.getString("mariokart.banana"),
+		if (ItemStackFromId.equals(MarioKart.config.getString("mariokart.banana"),
 				stack.getTypeId(), stack.getDurability())) {
-			if(!main.marioKart.isPlayerImmune(player)){
-				main.plugin.playCustomSound(player, MarioKartSound.BANANA_HIT);
+			if(!MarioKart.marioKart.isPlayerImmune(player)){
+				MarioKart.plugin.playCustomSound(player, MarioKartSound.BANANA_HIT);
 				item.remove();
 				RaceExecutor.penalty(player, ((Minecart) player.getVehicle()), 1);
 			}
@@ -164,14 +164,14 @@ public class URaceListener implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!main.trackCreators.containsKey(player.getName())) {
+		if (!MarioKart.trackCreators.containsKey(player.getName())) {
 			return;
 		}
-		TrackCreator creator = main.trackCreators.get(player.getName());
+		TrackCreator creator = MarioKart.trackCreators.get(player.getName());
 		Boolean wand = false;
 		@SuppressWarnings("deprecation")
 		int handid = player.getItemInHand().getTypeId();
-		if (handid == main.config.getInt("setup.create.wand")) {
+		if (handid == MarioKart.config.getInt("setup.create.wand")) {
 			wand = true;
 		}
 		creator.set(wand);
@@ -188,7 +188,7 @@ public class URaceListener implements Listener {
 		} catch (Exception e) {
 			return;
 		}
-	    main.marioKart.calculate(player, event);
+	    MarioKart.marioKart.calculate(player, event);
 		return;
 	}
 
@@ -207,7 +207,7 @@ public class URaceListener implements Listener {
 			List<Entity> nearby = shell.getNearbyEntities(15, 5, 15);
 			for(Entity e:nearby){
 				if(e instanceof Player){
-					main.plugin.playCustomSound((Player) e, MarioKartSound.TRACKING_BLEEP);
+					MarioKart.plugin.playCustomSound((Player) e, MarioKartSound.TRACKING_BLEEP);
 				}
 			}
 			sound = 3;
@@ -246,9 +246,9 @@ public class URaceListener implements Listener {
 			Vector vel = new Vector(x, 0, z);
 			shell.setVelocity(vel);
 			if (pz < 1.1 && px < 1.1) {
-				String msg = main.msgs.get("mario.hit");
+				String msg = MarioKart.msgs.get("mario.hit");
 				msg = msg.replaceAll(Pattern.quote("%name%"), "tracking shell");
-				main.plugin.playCustomSound(target, MarioKartSound.SHELL_HIT);
+				MarioKart.plugin.playCustomSound(target, MarioKartSound.SHELL_HIT);
 				target.sendMessage(ChatColor.RED + msg);
 				Entity cart = target.getVehicle();
 				if(cart == null){
@@ -285,10 +285,10 @@ public class URaceListener implements Listener {
 						if (entity instanceof Player) {
 							Player pl = (Player) entity;
 							if (ucars.listener.inACar(pl)) {
-								String msg = main.msgs.get("mario.hit");
+								String msg = MarioKart.msgs.get("mario.hit");
 								msg = msg.replaceAll(Pattern.quote("%name%"),
 										"green shell");
-								main.plugin.playCustomSound(pl, MarioKartSound.SHELL_HIT);
+								MarioKart.plugin.playCustomSound(pl, MarioKartSound.SHELL_HIT);
 								pl.sendMessage(ChatColor.RED + msg);
 								Entity cart = pl.getVehicle();
 								if(cart == null){
@@ -319,7 +319,7 @@ public class URaceListener implements Listener {
 	@EventHandler
 	void gameQuitting(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		main.plugin.resourcedPlayers.remove(player.getName());
+		MarioKart.plugin.resourcedPlayers.remove(player.getName());
 		Race game = plugin.raceMethods.inAGame(player, false);
 		if (game == null) {
 			RaceQueue queue = plugin.raceMethods.inGameQue(player);
@@ -337,7 +337,7 @@ public class URaceListener implements Listener {
 	@EventHandler
 	void gameQuitting(PlayerKickEvent event) {
 		Player player = event.getPlayer();
-		main.plugin.resourcedPlayers.remove(player.getName());
+		MarioKart.plugin.resourcedPlayers.remove(player.getName());
 		Race game = plugin.raceMethods.inAGame(player, false);
 		if (game == null) {
 			RaceQueue queue = plugin.raceMethods.inGameQue(player);
@@ -409,7 +409,7 @@ public class URaceListener implements Listener {
 
 	@EventHandler
 	void exploder(EntityExplodeEvent event) {
-		if (!main.config.getBoolean("mariokart.enable")) {
+		if (!MarioKart.config.getBoolean("mariokart.enable")) {
 			return;
 		}
 		if (event.getEntity() == null) {
@@ -458,7 +458,7 @@ public class URaceListener implements Listener {
 
 	@EventHandler
 	void signClicker(PlayerInteractEvent event) {
-		main.marioKart.calculate(event.getPlayer(), event);
+		MarioKart.marioKart.calculate(event.getPlayer(), event);
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
@@ -477,25 +477,25 @@ public class URaceListener implements Listener {
 				page = Integer.parseInt(ChatColor.stripColor(lines[2]));
 			} catch (NumberFormatException e) {
 			}
-			main.cmdExecutor.urace(event.getPlayer(), new String[] { "list",
+			MarioKart.cmdExecutor.urace(event.getPlayer(), new String[] { "list",
 					"" + page }, event.getPlayer());
 		} else if (cmd.equalsIgnoreCase("leave")
 				|| cmd.equalsIgnoreCase("quit") || cmd.equalsIgnoreCase("exit")) {
-			main.cmdExecutor.urace(event.getPlayer(), new String[] { "leave" },
+			MarioKart.cmdExecutor.urace(event.getPlayer(), new String[] { "leave" },
 					event.getPlayer());
 		} else if (cmd.equalsIgnoreCase("join")) {
 			String mode = ChatColor.stripColor(lines[3]);
 			if (mode.length() > 0) {
-				main.cmdExecutor.urace(event.getPlayer(), new String[] {
+				MarioKart.cmdExecutor.urace(event.getPlayer(), new String[] {
 						"join", ChatColor.stripColor(lines[2]).toLowerCase(),
 						mode }, event.getPlayer());
 			} else {
-				main.cmdExecutor.urace(event.getPlayer(), new String[] {
+				MarioKart.cmdExecutor.urace(event.getPlayer(), new String[] {
 						"join", ChatColor.stripColor(lines[2]).toLowerCase() },
 						event.getPlayer());
 			}
 		} else if (cmd.equalsIgnoreCase("shop")) {
-			main.cmdExecutor.urace(event.getPlayer(), new String[] { "shop" },
+			MarioKart.cmdExecutor.urace(event.getPlayer(), new String[] { "shop" },
 					event.getPlayer());
 		}
 		return;
@@ -505,27 +505,25 @@ public class URaceListener implements Listener {
 	void signWriter(SignChangeEvent event) {
 		String[] lines = event.getLines();
 		if (ChatColor.stripColor(lines[0]).equalsIgnoreCase("[MarioKart]")) {
-			lines[0] = main.colors.getTitle() + "[MarioKart]";
+			lines[0] = MarioKart.colors.getTitle() + "[MarioKart]";
 			Boolean text = true;
 			String cmd = ChatColor.stripColor(lines[1]);
 			if (cmd.equalsIgnoreCase("list")) {
-				lines[1] = main.colors.getInfo() + "List";
+				lines[1] = MarioKart.colors.getInfo() + "List";
 				if (!(lines[2].length() < 1)) {
 					text = false;
 				}
-				lines[2] = main.colors.getSuccess()
-						+ ChatColor.stripColor(lines[2]);
+				lines[2] = MarioKart.colors.getSuccess() + ChatColor.stripColor(lines[2]);
 			} else if (cmd.equalsIgnoreCase("join")) {
-				lines[1] = main.colors.getInfo() + "Join";
-				lines[2] = main.colors.getSuccess()
-						+ ChatColor.stripColor(lines[2]);
+				lines[1] = MarioKart.colors.getInfo() + "Join";
+				lines[2] = MarioKart.colors.getSuccess() + ChatColor.stripColor(lines[2]);
 				if (lines[2].equalsIgnoreCase("auto")) {
-					lines[2] = main.colors.getTp() + "Auto";
+					lines[2] = MarioKart.colors.getTp() + "Auto";
 				}
-				lines[3] = main.colors.getInfo() + lines[3];
+				lines[3] = MarioKart.colors.getInfo() + lines[3];
 				text = false;
 			} else if (cmd.equalsIgnoreCase("shop")) {
-				lines[1] = main.colors.getInfo() + "Shop";
+				lines[1] = MarioKart.colors.getInfo() + "Shop";
 
 			} else if (cmd.equalsIgnoreCase("leave")
 					|| cmd.equalsIgnoreCase("exit")
@@ -541,7 +539,7 @@ public class URaceListener implements Listener {
 					body = body.toLowerCase();
 					cmd = start + body;
 				}
-				lines[1] = main.colors.getInfo() + cmd;
+				lines[1] = MarioKart.colors.getInfo() + cmd;
 			} else if (cmd.equalsIgnoreCase("items")) {
 				Location above = event.getBlock().getLocation().add(0, 1.4, 0);
 				EnderCrystal crystal = (EnderCrystal) above.getWorld()
@@ -708,7 +706,7 @@ public class URaceListener implements Listener {
 		} catch (Exception e) {
 			return;
 		}
-		if (!main.config.getBoolean("mariokart.enable")) {
+		if (!MarioKart.config.getBoolean("mariokart.enable")) {
 			return;
 		}
 		event.setDamage(0);
@@ -791,11 +789,11 @@ public class URaceListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	void queueRespawns(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		RaceQueue r = main.plugin.raceMethods.inGameQue(player);
+		RaceQueue r = MarioKart.plugin.raceMethods.inGameQue(player);
 		if (r == null) {
 			return;
 		}
-		event.setRespawnLocation(r.getTrack().getLobby(main.plugin.getServer()));
+		event.setRespawnLocation(r.getTrack().getLobby(MarioKart.plugin.getServer()));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -823,13 +821,13 @@ public class URaceListener implements Listener {
 		}
 		Minecart cart = (Minecart) loc.getWorld().spawnEntity(loc,
 				EntityType.MINECART);
-		cart.setMetadata("kart.racing", new StatValue(null, main.plugin));
+		cart.setMetadata("kart.racing", new StatValue(null, MarioKart.plugin));
 		cart.setPassenger(player);
 		player.setMetadata("car.stayIn", new StatValue(null, plugin));
 		plugin.hotBarManager.updateHotBar(player);
 		player.updateInventory();
 		player.setScoreboard(race.board);
-		main.plugin.raceScheduler.updateRace(race);
+		MarioKart.plugin.raceScheduler.updateRace(race);
 		return;
 	}
 
@@ -896,23 +894,23 @@ public class URaceListener implements Listener {
 	@EventHandler
 	void raceFinish(MarioKartRaceFinishEvent event) {
 		Player player = event.getPlayer();
-		main.plugin.hotBarManager.clearHotBar(player.getName());
-		if (!main.config.getBoolean("general.race.rewards.enable")) {
+		MarioKart.plugin.hotBarManager.clearHotBar(player.getName());
+		if (!MarioKart.config.getBoolean("general.race.rewards.enable")) {
 			return;
 		}
 		int pos = event.getFinishPosition();
 		double reward = 0;
 		switch (pos) {
 		case 1: {
-			reward = main.config.getDouble("general.race.rewards.win");
+			reward = MarioKart.config.getDouble("general.race.rewards.win");
 			break;
 		}
 		case 2: {
-			reward = main.config.getDouble("general.race.rewards.second");
+			reward = MarioKart.config.getDouble("general.race.rewards.second");
 			break;
 		}
 		case 3: {
-			reward = main.config.getDouble("general.race.rewards.third");
+			reward = MarioKart.config.getDouble("general.race.rewards.third");
 			break;
 		}
 		default:
@@ -921,19 +919,19 @@ public class URaceListener implements Listener {
 		if (reward <= 0) {
 			return;
 		}
-		if (!main.vault || main.economy == null) {
+		if (!MarioKart.vault || MarioKart.economy == null) {
 			plugin.setupEconomy(); // Economy plugin loaded after MarioKart
-			if (!main.vault || main.economy == null) { // No Economy plugin
+			if (!MarioKart.vault || MarioKart.economy == null) { // No Economy plugin
 														// installed
 				return;
 			}
 		}
-		EconomyResponse r = main.economy
+		EconomyResponse r = MarioKart.economy
 				.depositPlayer(player.getName(), reward);
 		double b = r.balance;
-		String currency = main.config
+		String currency = MarioKart.config
 				.getString("general.race.rewards.currency");
-		String msg = main.msgs.get("race.end.rewards");
+		String msg = MarioKart.msgs.get("race.end.rewards");
 		msg = msg.replaceAll(Pattern.quote("%amount%"),
 				Matcher.quoteReplacement("" + reward));
 		msg = msg.replaceAll(Pattern.quote("%balance%"),
@@ -942,14 +940,14 @@ public class URaceListener implements Listener {
 				Matcher.quoteReplacement("" + currency));
 		msg = msg.replaceAll(Pattern.quote("%position%"), Matcher
 				.quoteReplacement("" + event.getPlayerFriendlyPosition()));
-		player.sendMessage(main.colors.getInfo() + msg);
+		player.sendMessage(MarioKart.colors.getInfo() + msg);
 		return;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	void pvp(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player
-				&& main.plugin.raceMethods.inAGame(
+				&& MarioKart.plugin.raceMethods.inAGame(
 						((Player) event.getEntity()), false) != null
 				&& event.getCause() == DamageCause.ENTITY_ATTACK) {
 			event.setDamage(0);
@@ -961,7 +959,7 @@ public class URaceListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	void pvp(EntityDamageByEntityEvent event) {
 		if (event.getEntity() instanceof Player
-				&& main.plugin.raceMethods.inAGame(
+				&& MarioKart.plugin.raceMethods.inAGame(
 						((Player) event.getEntity()), false) != null) {
 			event.setDamage(0);
 			event.setCancelled(true);
@@ -985,14 +983,14 @@ public class URaceListener implements Listener {
 			}
 		}
 		final Player player = (Player) e;
-		if (main.plugin.raceMethods.inAGame(player, false) == null) {
+		if (MarioKart.plugin.raceMethods.inAGame(player, false) == null) {
 			return;
 		}
 		if (car.hasMetadata("car.braking")
 				&& !player.hasMetadata("mariokart.slotChanging")
 				&& (player.getInventory().getHeldItemSlot() == 6 || player
 						.getInventory().getHeldItemSlot() == 7)) {
-			MarioHotBar hotBar = main.plugin.hotBarManager.getHotBar(player
+			MarioHotBar hotBar = MarioKart.plugin.hotBarManager.getHotBar(player
 					.getName());
 			if (player.getInventory().getHeldItemSlot() == 6) {
 				hotBar.scroll(HotBarSlot.SCROLLER);
@@ -1000,14 +998,14 @@ public class URaceListener implements Listener {
 				hotBar.scroll(HotBarSlot.UTIL);
 			}
 			player.setMetadata("mariokart.slotChanging", new StatValue(true,
-					main.plugin));
-			main.plugin.getServer().getScheduler()
-					.runTaskLater(main.plugin, new Runnable() {
+					MarioKart.plugin));
+			MarioKart.plugin.getServer().getScheduler()
+					.runTaskLater(MarioKart.plugin, new Runnable() {
 
 						@Override
 						public void run() {
 							player.removeMetadata("mariokart.slotChanging",
-									main.plugin);
+									MarioKart.plugin);
 						}
 					}, 15);
 			plugin.hotBarManager.updateHotBar(player);

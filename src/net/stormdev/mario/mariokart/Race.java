@@ -66,9 +66,9 @@ public class Race {
 		this.trackName = trackName;
 		this.totalLaps = this.track.getLaps();
 		this.maxCheckpoints = this.track.getCheckpoints().size() - 1;
-		this.tickrate = main.config.getLong("general.raceTickrate");
+		this.tickrate = MarioKart.config.getLong("general.raceTickrate");
 		this.scorerate = (long) ((this.tickrate * 2) + (this.tickrate / 0.5));
-		this.board = main.plugin.getServer().getScoreboardManager()
+		this.board = MarioKart.plugin.getServer().getScoreboardManager()
 				.getNewScoreboard();
 		this.scores = board.registerNewObjective("", "dummy");
 		scores.setDisplaySlot(DisplaySlot.BELOW_NAME);
@@ -80,7 +80,7 @@ public class Race {
 					+ "Race Time(s)", "dummy");
 		}
 		scoresBoard.setDisplaySlot(DisplaySlot.SIDEBAR);
-		this.timeLimitS = main.config
+		this.timeLimitS = MarioKart.config
 				.getInt("general.race.maxTimePerCheckpoint")
 				* track.getCheckpoints().size() + 60;
 	}
@@ -98,7 +98,7 @@ public class Race {
 				}
 			} catch (Exception e) {
 				if (!forceRemoveUser(user)) {
-					main.logger.info("getUser() failed to remove user");
+					MarioKart.getInstance().getLogger().info("getUser() failed to remove user");
 				}
 			}
 		}
@@ -139,14 +139,14 @@ public class Race {
 
 	public void playerOut(User user) {
 		user.setInRace(false);
-		main.plugin.hotBarManager.clearHotBar(user.getPlayerName());
+		MarioKart.plugin.hotBarManager.clearHotBar(user.getPlayerName());
 		Player player = null;
 		try {
 			player = user.getPlayer();
 		} catch (PlayerQuitException e) {
 			if (!forceRemoveUser(user)
 					&& playerUserRegistered(user.getPlayerName())) {
-				main.logger.info("race.playerOut failed to remove user");
+				MarioKart.getInstance().getLogger().info("race.playerOut failed to remove user");
 			}
 			return;
 		}
@@ -179,20 +179,19 @@ public class Race {
 		}
 		if (quit) {
 			if (!forceRemoveUser(user)) {
-				main.logger.info("race.quit failed to remove user");
+				MarioKart.getInstance().getLogger().info("race.quit failed to remove user");
 			}
 			if (type != RaceType.TIME_TRIAL) {
 				if (users.size() < 2) {
 					for (User u : getUsersIn()) {
-						String msg = main.msgs.get("race.end.soon");
+						String msg = MarioKart.msgs.get("race.end.soon");
 						try {
 							u.getPlayer().sendMessage(
-									main.colors.getInfo() + msg);
+									MarioKart.colors.getInfo() + msg);
 						} catch (PlayerQuitException e) {
 							// Player is no longer in the game
 							if (!forceRemoveUser(u)) {
-								main.logger
-										.info("race.leave failed to remove user");
+								MarioKart.getInstance().getLogger().info("race.leave failed to remove user");
 							}
 						} catch (Exception e){
 							//User is respawning
@@ -204,7 +203,7 @@ public class Race {
 		}
 		playerOut(user);
 		if (player != null) {
-			player.removeMetadata("car.stayIn", main.plugin);
+			player.removeMetadata("car.stayIn", MarioKart.plugin);
 		}
 		if (quit) {
 			if (player != null) {
@@ -216,17 +215,17 @@ public class Race {
 					veh.eject();
 					veh.remove();
 				}
-				player.removeMetadata("car.stayIn", main.plugin);
+				player.removeMetadata("car.stayIn", MarioKart.plugin);
 				player.getInventory().setContents(user.getOldInventory());
 				player.setGameMode(GameMode.SURVIVAL);
 				try {
-					player.teleport(this.track.getExit(main.plugin.getServer()));
+					player.teleport(this.track.getExit(MarioKart.plugin.getServer()));
 				} catch (Exception e) {
 					player.teleport(player.getWorld().getSpawnLocation());
 				}
 				player.sendMessage(ChatColor.GOLD
 						+ "Successfully quit the race!");
-				player.setScoreboard(main.plugin.getServer()
+				player.setScoreboard(MarioKart.plugin.getServer()
 						.getScoreboardManager().getMainScoreboard());
 				player.updateInventory();
 			}
@@ -237,7 +236,7 @@ public class Race {
 									+ " quit the race!");
 				} catch (PlayerQuitException e) {
 					if (!forceRemoveUser(us)) {
-						main.logger.info("race.quit failed to remove user");
+						MarioKart.getInstance().getLogger().info("race.quit failed to remove user");
 					}
 				} catch (Exception e){
 					//User is respawning
@@ -260,7 +259,7 @@ public class Race {
 				end();
 			} catch (Exception e) {
 			}
-			main.plugin.raceScheduler.recalculateQueues();
+			MarioKart.plugin.raceScheduler.recalculateQueues();
 		}
 	}
 
@@ -290,8 +289,8 @@ public class Race {
 	public void startEndCount() {
 		final int count = this.finishCountdown;
 
-		main.plugin.getServer().getScheduler()
-				.runTaskAsynchronously(main.plugin, new Runnable() {
+		MarioKart.plugin.getServer().getScheduler()
+				.runTaskAsynchronously(MarioKart.plugin, new Runnable() {
 
 					@Override
 					public void run() {
@@ -307,10 +306,10 @@ public class Race {
 							if (!ended) {
 								try {
 									try {
-										main.plugin
+										MarioKart.plugin
 												.getServer()
 												.getScheduler()
-												.runTask(main.plugin,
+												.runTask(MarioKart.plugin,
 														new Runnable() {
 
 															@Override
@@ -366,8 +365,8 @@ public class Race {
 			}
 		}
 		final long ms = tickrate * 50;
-		this.task = main.plugin.getServer().getScheduler()
-				.runTaskAsynchronously(main.plugin, new Runnable() {
+		this.task = MarioKart.plugin.getServer().getScheduler()
+				.runTaskAsynchronously(MarioKart.plugin, new Runnable() {
 
 					@Override
 					public void run() {
@@ -377,26 +376,26 @@ public class Race {
 							if (tps < 19.9) {								
 								if (tps < 13) {
 									if(strikes < 5){
-										main.logger
+										MarioKart.getInstance().getLogger()
 										.info("[WARNING] Server at critical, Race "+getGameId()+" strike: "+strikes+"/5");
 										strikes++;
 									}
 									else{
-										main.logger
+										MarioKart.getInstance().getLogger()
 										.info("[WARNING] Cancelling Race to compensate for resource loss!");
-										broadcast(main.colors.getError()+"[Error] Race cancelled to compensate for "
+										broadcast(MarioKart.colors.getError()+"[Error] Race cancelled to compensate for "
 												+ "server resource loss!");
 										end();
 										return;
 									}
 									mis = (long) (ms + (tps * 100));
 								} else if (tps < 15) {
-									main.logger
+									MarioKart.getInstance().getLogger()
 									.info("[WARNING] Server running out of resources! - "
 											+ "Compensating by reducing MarioKart tickRate (Accuracy)");
 									mis = ms + 1000; // Go all out to keep up
 								} else if (tps < 17) {
-									main.logger
+									MarioKart.getInstance().getLogger()
 											.info("[WARNING] Server running out of resources! - "
 													+ "Compensating by reducing MarioKart tickRate (Accuracy)");
 									mis = ms + 500; // Reduce lag
@@ -426,8 +425,8 @@ public class Race {
 						return;
 					}
 				});
-		this.scoreCalcs = main.plugin.getServer().getScheduler()
-				.runTaskTimer(main.plugin, new Runnable() {
+		this.scoreCalcs = MarioKart.plugin.getServer().getScheduler()
+				.runTaskTimer(MarioKart.plugin, new Runnable() {
 
 					@Override
 					public void run() {
@@ -453,7 +452,7 @@ public class Race {
 								} catch (PlayerQuitException e) {
 									// Player has left
 									if (!forceRemoveUser(u)) {
-										main.logger
+										MarioKart.getInstance().getLogger()
 												.info("race.scores failed to remove invalid user");
 									}
 								}
@@ -488,7 +487,7 @@ public class Race {
 			this.startTimeMS = System.currentTimeMillis();
 			RaceExecutor.onRaceStart(this);
 		} catch (Exception e) {
-			main.logger.log("Error starting race!", Level.SEVERE);
+			MarioKart.getInstance().getLogger().severe("Error starting race!");
 			end();
 		}
 		return;
@@ -549,7 +548,7 @@ public class Race {
 		this.running = false;
 		ended = true;
 		for (Location l : ((List<Location>) this.reloadingItemBoxes.clone())) {
-			main.listener.spawnItemPickupBox(l.add(0, 2.4, 0), false);
+			MarioKart.listener.spawnItemPickupBox(l.add(0, 2.4, 0), false);
 			this.reloadingItemBoxes.remove(l);
 		}
 		if (task != null) {
@@ -581,7 +580,7 @@ public class Race {
 			try {
 				player = user.getPlayer();
                 if(player != null){
-                	player.setScoreboard(main.plugin.getServer()
+                	player.setScoreboard(MarioKart.plugin.getServer()
     						.getScoreboardManager().getMainScoreboard());
 
     				player.setLevel(user.getOldLevel());
@@ -600,16 +599,16 @@ public class Race {
 		try {
 			RaceExecutor.onRaceEnd(this);
 		} catch (Exception e) {
-			main.logger.info("[IMPORTANT] Failed to process trailing end of race!");
+			MarioKart.getInstance().getLogger().info("[IMPORTANT] Failed to process trailing end of race!");
 			e.printStackTrace();
 			//Race voided
 		}
 		try {
 			clear();
-			main.plugin.raceScheduler.removeRace(this);
-			main.plugin.raceScheduler.recalculateQueues();
+			MarioKart.plugin.raceScheduler.removeRace(this);
+			MarioKart.plugin.raceScheduler.recalculateQueues();
 		} catch (Exception e) {
-			main.logger.info("[IMPORTANT] Failed to remove race");
+			MarioKart.getInstance().getLogger().info("[IMPORTANT] Failed to remove race");
 			e.printStackTrace();
 			//Race Voided
 		}
@@ -624,7 +623,7 @@ public class Race {
 		}
 		finished.add(user.getPlayerName());
 		if (!forceRemoveUser(user)) {
-			main.logger.info("race.finish failed to remove user");
+			MarioKart.getInstance().getLogger().info("race.finish failed to remove user");
 		}
 		user.setFinished(true);
 		user.setInRace(false);
@@ -632,7 +631,7 @@ public class Race {
 		try {
 			Player player = user.getPlayer();
 			if (player == null) {
-				player = main.plugin.getServer()
+				player = MarioKart.plugin.getServer()
 						.getPlayer(user.getPlayerName()); // Player removed
 															// prematurely
 			}
@@ -661,7 +660,7 @@ public class Race {
 		for (User u : getUsers()) {
 			if (u.getPlayerName().equals(playerName)) {
 				if (!forceRemoveUser(u)) {
-					main.logger.info("updateUser() failed to remove user");
+					MarioKart.getInstance().getLogger().info("updateUser() failed to remove user");
 				}
 				u.setPlayer(player);
 				users.add(u);
@@ -675,7 +674,7 @@ public class Race {
 		for (User u : getUsers()) {
 			if (u.getPlayerName().equals(user.getPlayerName())) {
 				if (!forceRemoveUser(u)) {
-					main.logger.info("updateUser() failed to remove user");
+					MarioKart.getInstance().getLogger().info("updateUser() failed to remove user");
 				}
 				users.add(user);
 				return user;
@@ -700,10 +699,10 @@ public class Race {
 																// of
 					// better
 					// performance
-					p.removeMetadata("checkpoint.distance", main.plugin);
+					p.removeMetadata("checkpoint.distance", MarioKart.plugin);
 					p.setMetadata("checkpoint.distance", new StatValue(dist,
-							main.plugin));
-					if (dist < main.plugin.checkpointRadiusSquared) {
+							MarioKart.plugin));
+					if (dist < MarioKart.plugin.checkpointRadiusSquared) {
 						at = true;
 						checkpoint = key;
 						return new CheckpointCheck(at, checkpoint);
@@ -792,7 +791,7 @@ public class Race {
 				leave(user, true);
 			}
 			if(player != null){
-				player.sendMessage(main.colors.getInfo() + msg);
+				player.sendMessage(MarioKart.colors.getInfo() + msg);
 			}
 		}
 		return;

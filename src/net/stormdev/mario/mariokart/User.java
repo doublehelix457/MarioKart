@@ -70,7 +70,7 @@ public class User {
 
 	public Player getPlayer() throws PlayerQuitException {
 		if(player == null){
-			player = main.plugin.getServer().getPlayer(getPlayerName());
+			player = MarioKart.plugin.getServer().getPlayer(getPlayerName());
 		}
 		try {
 			if(isRespawning() && player == null){

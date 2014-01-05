@@ -3,7 +3,7 @@ package net.stormdev.mariokartAddons;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.stormdev.mario.mariokart.main;
+import net.stormdev.mario.mariokart.MarioKart;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +21,7 @@ public class PowerupItem extends ItemStack {
 			pow = start.toUpperCase() + body;
 		}
 		ItemMeta meta = this.getItemMeta();
-		meta.setDisplayName(main.colors.getInfo() + pow);
+		meta.setDisplayName(MarioKart.colors.getInfo() + pow);
 		// Set lore based on Item
 		List<String> lore = new ArrayList<String>();
 		if (powerup == Powerup.BANANA) {
