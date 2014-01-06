@@ -1,12 +1,9 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Lang {
-	MarioKart plugin = null;
-
 	public Lang(MarioKart main) {
-		this.plugin = main;
 		FileConfiguration lang = MarioKart.lang;
 		if (!lang.contains("error.memoryLockdown")) {
 			lang.set("error.memoryLockdown",
@@ -208,9 +205,9 @@ public class Lang {
 	}
 
 	public String getRaw(String key) {
-		if (!plugin.lang.contains(key)) {
+		if (!MarioKart.lang.contains(key)) {
 			return key;
 		}
-		return plugin.lang.getString(key);
+		return MarioKart.lang.getString(key);
 	}
 }

@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,15 +6,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.milkbowl.vault.economy.EconomyResponse;
-import net.stormdev.mario.utils.DynamicLagReducer;
-import net.stormdev.mario.utils.HotBarSlot;
-import net.stormdev.mario.utils.ItemStackFromId;
-import net.stormdev.mario.utils.MarioHotBar;
-import net.stormdev.mario.utils.MarioKartRaceFinishEvent;
-import net.stormdev.mario.utils.MarioKartSound;
-import net.stormdev.mario.utils.RaceQueue;
-import net.stormdev.mario.utils.TrackCreator;
-import net.stormdev.mario.utils.shellUpdateEvent;
+import net.stormdev.mariokart.utils.DynamicLagReducer;
+import net.stormdev.mariokart.utils.HotBarSlot;
+import net.stormdev.mariokart.utils.ItemStackFromId;
+import net.stormdev.mariokart.utils.MarioHotBar;
+import net.stormdev.mariokart.utils.MarioKartRaceFinishEvent;
+import net.stormdev.mariokart.utils.MarioKartSound;
+import net.stormdev.mariokart.utils.RaceQueue;
+import net.stormdev.mariokart.utils.TrackCreator;
+import net.stormdev.mariokart.utils.shellUpdateEvent;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;

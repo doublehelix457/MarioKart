@@ -1,13 +1,13 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.stormdev.mario.mariokart.Race;
-import net.stormdev.mario.mariokart.User;
-import net.stormdev.mario.mariokart.MarioKart;
+import net.stormdev.mariokart.MarioKart;
+import net.stormdev.mariokart.Race;
+import net.stormdev.mariokart.User;
 
 import org.bukkit.entity.Player;
 

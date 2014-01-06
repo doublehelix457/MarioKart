@@ -1,8 +1,8 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.mariokart.MarioKart;
+import net.stormdev.mariokart.MarioKart;
 
 import org.bukkit.entity.Player;
 

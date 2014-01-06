@@ -1,4 +1,4 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.util.HashMap;
 import java.util.Map;

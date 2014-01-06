@@ -1,4 +1,4 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.stormdev.mario.mariokart.MarioKart;
+import net.stormdev.mariokart.MarioKart;
 import code.husky.mysql.MySQL;
 
 public class SQLManager {

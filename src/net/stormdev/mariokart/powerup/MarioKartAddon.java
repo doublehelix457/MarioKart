@@ -1,4 +1,4 @@
-package net.stormdev.mariokartAddons;
+package net.stormdev.mariokart.powerup;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,22 +7,21 @@ import java.util.SortedMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.mariokart.Race;
-import net.stormdev.mario.mariokart.RaceExecutor;
-import net.stormdev.mario.mariokart.MarioKart;
-import net.stormdev.mario.utils.HotBarSlot;
-import net.stormdev.mario.utils.ItemStackFromId;
-import net.stormdev.mario.utils.MarioHotBar;
-import net.stormdev.mario.utils.MarioKartSound;
-import net.stormdev.mario.utils.RaceType;
-import net.stormdev.mario.utils.shellUpdateEvent;
+import net.stormdev.mariokart.MarioKart;
+import net.stormdev.mariokart.Race;
+import net.stormdev.mariokart.RaceExecutor;
+import net.stormdev.mariokart.utils.HotBarSlot;
+import net.stormdev.mariokart.utils.ItemStackFromId;
+import net.stormdev.mariokart.utils.MarioHotBar;
+import net.stormdev.mariokart.utils.MarioKartSound;
+import net.stormdev.mariokart.utils.RaceType;
+import net.stormdev.mariokart.utils.shellUpdateEvent;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -56,7 +55,7 @@ public class MarioKartAddon {
 
 	public MarioKartAddon(MarioKart plugin) {
 		this.plugin = plugin;
-		enabled = MarioKart.config.getBoolean("mariokart.enable");
+		enabled = MarioKart.getInstance().getConfig().getBoolean("mariokart.enable");
 		this.respawn = new ItemStack(Material.EGG);
 		ItemMeta meta = this.respawn.getItemMeta();
 		meta.setDisplayName(ChatColor.GREEN + "Respawn");
@@ -545,13 +544,12 @@ public class MarioKartAddon {
 				tnt.setMetadata("explosion.none", new StatValue(null, plugin));
 				vel.setY(0.2); // Distance to throw it
 				tnt.setVelocity(vel);
-				final MoveableInt count = new MoveableInt(12);
-				plugin.getServer().getScheduler()
-						.runTaskAsynchronously(plugin, new Runnable() {
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+							int count = 12;
 							@Override
 							public void run() {
-								if (count.getInt() > 0) {
-									count.setInt(count.getInt() - 1);
+								if (count > 0) {
+									count--;
 									tnt.setVelocity(vel);
 									tnt.setMetadata("explosion.none",
 											new StatValue(null, plugin));
@@ -899,7 +897,6 @@ public class MarioKartAddon {
 										int min = 0;
 										int max = 20;
 										int delay = 100;
-										World world = ply.getWorld();
 										int z = plugin.random
 												.nextInt(max - min) + min;
 										for (int i = 0; i <= z; i++) {

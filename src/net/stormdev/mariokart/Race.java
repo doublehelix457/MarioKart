@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +9,12 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import net.stormdev.mario.utils.CheckpointCheck;
-import net.stormdev.mario.utils.DoubleValueComparator;
-import net.stormdev.mario.utils.DynamicLagReducer;
-import net.stormdev.mario.utils.PlayerQuitException;
-import net.stormdev.mario.utils.RaceTrack;
-import net.stormdev.mario.utils.RaceType;
-import net.stormdev.mario.utils.SerializableLocation;
+import net.stormdev.mariokart.utils.CheckpointCheck;
+import net.stormdev.mariokart.utils.DoubleValueComparator;
+import net.stormdev.mariokart.utils.DynamicLagReducer;
+import net.stormdev.mariokart.utils.RaceTrack;
+import net.stormdev.mariokart.utils.RaceType;
+import net.stormdev.mariokart.utils.SerializableLocation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -141,15 +140,7 @@ public class Race {
 		user.setInRace(false);
 		MarioKart.plugin.hotBarManager.clearHotBar(user.getPlayerName());
 		Player player = null;
-		try {
-			player = user.getPlayer();
-		} catch (PlayerQuitException e) {
-			if (!forceRemoveUser(user)
-					&& playerUserRegistered(user.getPlayerName())) {
-				MarioKart.getInstance().getLogger().info("race.playerOut failed to remove user");
-			}
-			return;
-		}
+		player = user.getPlayer();
 		if(player != null){
 			player.setLevel(user.getOldLevel());
 			player.setExp(user.getOldExp());
@@ -159,7 +150,7 @@ public class Race {
 
 	public Boolean join(Player player) {
 		if (users.size() < this.track.getMaxPlayers()) {
-			User user = new User(player, player.getLevel(), player.getExp());
+			User user = new User(player);
 			users.add(user);
 			return true;
 		}
@@ -169,13 +160,9 @@ public class Race {
 	@SuppressWarnings("deprecation")
 	public void leave(User user, boolean quit) {
 		Player player = null;
-		try {
-			player = user.getPlayer();
-			if(player != null){
-				player.setLevel(user.getOldLevel());
-			}
-		} catch (PlayerQuitException e1) {
-			// User quit
+		player = user.getPlayer();
+		if(player != null){
+			player.setLevel(user.getOldLevel());
 		}
 		if (quit) {
 			if (!forceRemoveUser(user)) {
@@ -188,11 +175,6 @@ public class Race {
 						try {
 							u.getPlayer().sendMessage(
 									MarioKart.colors.getInfo() + msg);
-						} catch (PlayerQuitException e) {
-							// Player is no longer in the game
-							if (!forceRemoveUser(u)) {
-								MarioKart.getInstance().getLogger().info("race.leave failed to remove user");
-							}
 						} catch (Exception e){
 							//User is respawning
 						}
@@ -784,14 +766,11 @@ public class Race {
 
 	public void broadcast(String msg) {
 		for (User user : getUsersIn()) {
-			Player player = null;
-			try {
-				player = user.getPlayer();
-			} catch (PlayerQuitException e) {
-				leave(user, true);
-			}
+			Player player = user.getPlayer();
 			if(player != null){
 				player.sendMessage(MarioKart.colors.getInfo() + msg);
+			} else {
+				leave(user, true);
 			}
 		}
 		return;

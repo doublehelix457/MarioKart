@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.utils.DynamicLagReducer;
-import net.stormdev.mario.utils.MarioKartSound;
-import net.stormdev.mario.utils.PlayerQuitException;
-import net.stormdev.mario.utils.RaceQueue;
-import net.stormdev.mario.utils.RaceTrack;
-import net.stormdev.mario.utils.RaceType;
-import net.stormdev.mario.utils.SerializableLocation;
+import net.stormdev.mariokart.utils.DynamicLagReducer;
+import net.stormdev.mariokart.utils.MarioKartSound;
+import net.stormdev.mariokart.utils.RaceQueue;
+import net.stormdev.mariokart.utils.RaceTrack;
+import net.stormdev.mariokart.utils.RaceType;
+import net.stormdev.mariokart.utils.SerializableLocation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -365,12 +364,9 @@ public class RaceScheduler {
 		this.races.put(race.getGameId(), race);
 		final List<User> users = race.getUsers();
 		for (User user : users) {
-			Player player = null;
-			try {
-				player = user.getPlayer();
-			} catch (PlayerQuitException e) {
+			Player player = user.getPlayer();
+			if (player == null) {
 				race.leave(user, true);
-				// User has left
 			}
 			user.setOldInventory(player.getInventory().getContents().clone());
 			if (player != null) {
@@ -401,11 +397,7 @@ public class RaceScheduler {
 				Player p = null;
 				int randomNumber = MarioKart.plugin.random.nextInt(max);
 				User user = users.get(randomNumber);
-				try {
-					p = users.get(randomNumber).getPlayer();
-				} catch (PlayerQuitException e) {
-					// Player has left
-				}
+				p = users.get(randomNumber).getPlayer();
 				users.remove(user);
 				Location loc = grid.get(i);
 				if (race.getType() == RaceType.TIME_TRIAL) {
@@ -435,26 +427,17 @@ public class RaceScheduler {
 		}
 		if (users.size() > 0) {
 			User user = users.get(0);
-			try {
-				Player p = user.getPlayer();
-				p.sendMessage(MarioKart.colors.getError()
-						+ MarioKart.msgs.get("race.que.full"));
-			} catch (PlayerQuitException e) {
-				// Player has left anyway
-			}
+			Player p = user.getPlayer();
+			p.sendMessage(MarioKart.colors.getError() + MarioKart.msgs.get("race.que.full"));
 			race.leave(user, true);
 		}
 
 		for (User user : users) {
 			Player player;
-			try {
-				player = user.getPlayer();
-				user.setLocation(player.getLocation().clone());
-				player.sendMessage(MarioKart.colors.getInfo()
-						+ MarioKart.msgs.get("race.que.preparing"));
-			} catch (PlayerQuitException e) {
-				// Player has left
-			}
+			player = user.getPlayer();
+			user.setLocation(player.getLocation().clone());
+			player.sendMessage(MarioKart.colors.getInfo()
+					+ MarioKart.msgs.get("race.que.preparing"));
 		}
 		final List<User> users2 = race.getUsers();
 		for (User user2 : users2) {
@@ -465,15 +448,11 @@ public class RaceScheduler {
 					@Override
 					public void run() {
 						for (User user : users2) {
-							try {
-								user.getPlayer()
-										.sendMessage(
-												MarioKart.colors.getInfo()
-														+ MarioKart.msgs
-																.get("race.que.starting"));
-							} catch (PlayerQuitException e) {
-								// User has left
-							}
+							user.getPlayer()
+									.sendMessage(
+											MarioKart.colors.getInfo()
+													+ MarioKart.msgs
+															.get("race.que.starting"));
 						}
 						for (int i = 10; i > 0; i--) {
 							try {
@@ -515,13 +494,9 @@ public class RaceScheduler {
 								// Game ended
 							}
 							for (User user : users2) {
-								try {
 									Player p = user.getPlayer();
 									p.sendMessage(MarioKart.colors.getInfo() + ""
 											+ i);
-								} catch (PlayerQuitException e) {
-									// Player has left
-								}
 							}
 							try {
 								Thread.sleep(1000);
@@ -532,13 +507,9 @@ public class RaceScheduler {
 							car.removeMetadata("car.frozen", MarioKart.plugin);
 						}
 						for (User user : users2) {
-							try {
 								user.getPlayer().sendMessage(
 										MarioKart.colors.getInfo()
 												+ MarioKart.msgs.get("race.que.go"));
-							} catch (PlayerQuitException e) {
-								// Player has left
-							}
 						}
 						race.start();
 						return;

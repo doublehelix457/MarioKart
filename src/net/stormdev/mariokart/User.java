@@ -1,6 +1,4 @@
-package net.stormdev.mario.mariokart;
-
-import net.stormdev.mario.utils.PlayerQuitException;
+package net.stormdev.mariokart;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -34,13 +32,13 @@ public class User {
 	
 	private boolean respawning = false;
 
-	public User(Player player, int oldLevel, float oldExp) {
+	public User(Player player) {
 		this.player = player;
 		this.playerName = player.getName();
 		this.checkpoint = 0;
 		this.lapsLeft = 3;
-		this.oldLevel = oldLevel;
-		this.oldExp = oldExp;
+		this.oldLevel = player.getLevel();
+		this.oldExp = player.getExp();
 		try {
 			this.oldGameMode = player.getGameMode();
 		} catch (Exception e) {
@@ -68,23 +66,18 @@ public class User {
 		return playerName;
 	}
 
-	public Player getPlayer() throws PlayerQuitException {
+	public Player getPlayer() {
 		if(player == null){
 			player = MarioKart.plugin.getServer().getPlayer(getPlayerName());
 		}
-		try {
-			if(isRespawning() && player == null){
-				return null;
-			}
-			else if(isRespawning() && player != null){
-				setRespawning(false);
-			}
-			if (player == null || !player.isOnline()) {
-				player = null;
-				throw new PlayerQuitException(playerName);
-			}
-		} catch (Exception e) {
-			throw new PlayerQuitException(playerName);
+		if(isRespawning() && player == null){
+			return null;
+		}
+		else if(isRespawning() && player != null){
+			setRespawning(false);
+		}
+		if (player == null || !player.isOnline()) {
+			player = null;
 		}
 		return player;
 	}

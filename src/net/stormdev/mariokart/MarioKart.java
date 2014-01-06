@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,19 +18,19 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.milkbowl.vault.economy.Economy;
-import net.stormdev.mario.utils.DynamicLagReducer;
-import net.stormdev.mario.utils.HotBarManager;
-import net.stormdev.mario.utils.HotBarUpgrade;
-import net.stormdev.mario.utils.MarioKartSound;
-import net.stormdev.mario.utils.RaceMethods;
-import net.stormdev.mario.utils.RaceQueue;
-import net.stormdev.mario.utils.RaceQueueManager;
-import net.stormdev.mario.utils.RaceTrackManager;
-import net.stormdev.mario.utils.Shop;
-import net.stormdev.mario.utils.TrackCreator;
-import net.stormdev.mario.utils.Unlockable;
-import net.stormdev.mario.utils.UnlockableManager;
-import net.stormdev.mariokartAddons.MarioKartAddon;
+import net.stormdev.mariokart.powerup.MarioKartAddon;
+import net.stormdev.mariokart.utils.DynamicLagReducer;
+import net.stormdev.mariokart.utils.HotBarManager;
+import net.stormdev.mariokart.utils.HotBarUpgrade;
+import net.stormdev.mariokart.utils.MarioKartSound;
+import net.stormdev.mariokart.utils.RaceMethods;
+import net.stormdev.mariokart.utils.RaceQueue;
+import net.stormdev.mariokart.utils.RaceQueueManager;
+import net.stormdev.mariokart.utils.RaceTrackManager;
+import net.stormdev.mariokart.utils.Shop;
+import net.stormdev.mariokart.utils.TrackCreator;
+import net.stormdev.mariokart.utils.Unlockable;
+import net.stormdev.mariokart.utils.UnlockableManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -39,7 +39,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -52,7 +51,7 @@ import com.useful.ucars.ucars;
 public class MarioKart extends JavaPlugin {
 	public static YamlConfiguration lang = null;
 	public static MarioKart plugin;
-	public static FileConfiguration config = new YamlConfiguration();
+	public static FileConfiguration config = null;
 	public static Colors colors;
 	public static ucars ucars = null;
 	public static URaceCommandExecutor cmdExecutor = null;
@@ -100,17 +99,17 @@ public class MarioKart extends JavaPlugin {
 		File langFile = new File(getDataFolder(), "lang.yml");
 		lang = YamlConfiguration.loadConfiguration(langFile);
 		msgs = new Lang(this);
-		cmdExecutor = new URaceCommandExecutor(this);
+		cmdExecutor = new URaceCommandExecutor();
 		if (!new File(getDataFolder(), "config.yml").exists() || new File(getDataFolder(), "config.yml").length() < 1) {
 			getDataFolder().mkdirs();
-			File configFile = new File(getDataFolder().getAbsolutePath()
-					+ File.separator + "config.yml");
+			File configFile = new File(getDataFolder(), "config.yml");
 			try {
 				configFile.createNewFile();
 			} catch (IOException e) {
 			}
 			copy(getResource("config.yml"), configFile);
 		}
+		config = getConfig();
 		try {
 			lang.save(langFile);
 		} catch (IOException e1) {
@@ -123,10 +122,10 @@ public class MarioKart extends JavaPlugin {
 				getConfig().getString("colorScheme.title"),
 				getConfig().getString("colorScheme.title"));
 		getLogger().info("Config loaded!");
-		this.checkpointRadiusSquared = Math.pow(config.getDouble("general.checkpointRadius"), 2);
+		this.checkpointRadiusSquared = Math.pow(getConfig().getDouble("general.checkpointRadius"), 2);
 		getLogger().info("Searching for uCars...");
 		if (getServer().getPluginManager().getPlugin("uCars") != null) {
-			ucars = (com.useful.ucars.ucars) getServer().getPluginManager().getPlugin("uCars");
+			ucars = (ucars) getServer().getPluginManager().getPlugin("uCars");
 		} else {
 			getLogger().info("Unable to find uCars!");
 			getServer().getPluginManager().disablePlugin(this);
@@ -144,8 +143,7 @@ public class MarioKart extends JavaPlugin {
 				+ "tracks.uracetracks"));
 		this.raceQueues = new RaceQueueManager();
 		this.raceMethods = new RaceMethods();
-		this.raceScheduler = new RaceScheduler(
-				config.getInt("general.raceLimit"));
+		this.raceScheduler = new RaceScheduler(getConfig().getInt("general.raceLimit"));
 		// Setup marioKart
 		marioKart = new MarioKartAddon(this);
 		this.raceTimes = new RaceTimes(new File(getDataFolder()
@@ -188,19 +186,11 @@ public class MarioKart extends JavaPlugin {
 		} catch (MalformedURLException e2) {
 			packUrl = rl;
 		}
-		this.upgradeManager = new UnlockableManager(new File(getDataFolder()
-				.getAbsolutePath()
-				+ File.separator
-				+ "Data"
-				+ File.separator
-				+ "upgradesData.mkdata"),
+		this.upgradeManager = new UnlockableManager(new File(getDataFolder() + File.separator + "Data" + File.separator + "upgradesData.mkdata"),
 				config.getBoolean("general.upgrades.useSQL"), getUnlocks());
 		this.hotBarManager = new HotBarManager(config.getBoolean("general.upgrades.enable"));
-		this.lagReducer = getServer().getScheduler().runTaskTimer(this,
-				new DynamicLagReducer(), 100L, 1L);
+		this.lagReducer = getServer().getScheduler().runTaskTimer(this, new DynamicLagReducer(), 100L, 1L);
 		System.gc();
-		getLogger().info("MarioKart v" + plugin.getDescription().getVersion()
-				+ " has been enabled!");
 	}
 
 	@Override
@@ -213,20 +203,15 @@ public class MarioKart extends JavaPlugin {
 			races.get(id).end(); // End the race
 		}
 		raceQueues.clear();
-		Player[] players = getServer().getOnlinePlayers().clone();
-		for (Player player : players) {
+		for (Player player : getServer().getOnlinePlayers()) {
 			if (player.hasMetadata("car.stayIn")) {
-				player.removeMetadata("car.stayIn", plugin);
+				player.removeMetadata("car.stayIn", this);
 			}
 		}
 		this.lagReducer.cancel();
 		getServer().getScheduler().cancelTasks(this);
 		System.gc();
-		try {
-			Shop.getShop().destroy();
-		} catch (Exception e) {
-			// Shop is invalid anyway
-		}
+		Shop.getShop().destroy();
 		this.upgradeManager.unloadSQL();
 		System.gc();
 	}
@@ -251,22 +236,14 @@ public class MarioKart extends JavaPlugin {
 	}
 
 	public boolean vaultInstalled(){
-		Plugin[] plugins = getServer().getPluginManager().getPlugins();
-		for (Plugin p : plugins) {
-			if (p.getName().equals("Vault")) {
-				return true;
-			}
-		}
-		return false;
+		return getServer().getPluginManager().getPlugin("Vault") != null;
 	}
 	
 	public boolean setupEconomy() {
 		if(!vault){
 			return false;
 		}
-		RegisteredServiceProvider<Economy> economyProvider = getServer()
-				.getServicesManager().getRegistration(
-						net.milkbowl.vault.economy.Economy.class);
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		}

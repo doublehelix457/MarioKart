@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,12 +9,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.utils.CheckpointCheck;
-import net.stormdev.mario.utils.DoubleValueComparator;
-import net.stormdev.mario.utils.MarioKartRaceFinishEvent;
-import net.stormdev.mario.utils.MarioKartSound;
-import net.stormdev.mario.utils.PlayerQuitException;
-import net.stormdev.mario.utils.RaceType;
+import net.stormdev.mariokart.utils.CheckpointCheck;
+import net.stormdev.mariokart.utils.DoubleValueComparator;
+import net.stormdev.mariokart.utils.MarioKartRaceFinishEvent;
+import net.stormdev.mariokart.utils.MarioKartSound;
+import net.stormdev.mariokart.utils.RaceType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -55,12 +54,7 @@ public class RaceExecutor {
 			}
 			Map<String, Double> scores = new HashMap<String, Double>();
 			Boolean finished = false;
-			Player player = null;
-			try {
-				player = user.getPlayer();
-			} catch (PlayerQuitException e1) {
-				// Player has left
-			}
+			Player player = user.getPlayer();
 			if (player == null) {
 				// Player has been removed from race prematurely
 				player = MarioKart.plugin.getServer()
@@ -105,19 +99,15 @@ public class RaceExecutor {
 			} else {
 				HashMap<User, Double> checkpointDists = new HashMap<User, Double>();
 				for (User u : game.getUsersIn()) {
-					try {
-						Player pp = u.getPlayer();
-						if (pp != null) {
-							if (pp.hasMetadata("checkpoint.distance")) {
-								List<MetadataValue> metas = pp
-										.getMetadata("checkpoint.distance");
-								checkpointDists.put(u,
-										(Double) ((StatValue) metas.get(0))
-												.getValue());
-							}
+					Player pp = u.getPlayer();
+					if (pp != null) {
+						if (pp.hasMetadata("checkpoint.distance")) {
+							List<MetadataValue> metas = pp
+									.getMetadata("checkpoint.distance");
+							checkpointDists.put(u,
+									(Double) ((StatValue) metas.get(0))
+											.getValue());
 						}
-					} catch (PlayerQuitException e) {
-						// Player has left
 					}
 				}
 
@@ -272,15 +262,14 @@ public class RaceExecutor {
 	public static void onRaceStart(Race game){
 		List<User> users = game.getUsers();
 		for (User user : users) {
-			try {
+			if (user.getPlayer() == null) {
+				game.leave(user, true);
+			} else {
 				Player player = user.getPlayer();
 				player.setGameMode(GameMode.SURVIVAL);
 				player.getInventory().clear();
-				MarioKart.plugin.hotBarManager.updateHotBar(player);
+				MarioKart.getInstance().hotBarManager.updateHotBar(player);
 				player.updateInventory();
-			} catch (PlayerQuitException e) {
-				// Player has left
-				game.leave(user, true);
 			}
 		}
 		MarioKart.plugin.raceScheduler.updateRace(game);
@@ -291,11 +280,7 @@ public class RaceExecutor {
 			String msg = MarioKart.msgs.get("race.mid.lap");
 			msg = msg.replaceAll(Pattern.quote("%lap%"), "" + 1);
 			msg = msg.replaceAll(Pattern.quote("%total%"), "" + game.totalLaps);
-			try {
-				user.getPlayer().sendMessage(MarioKart.colors.getInfo() + msg);
-			} catch (PlayerQuitException e) {
-				// Player has left
-			}
+			user.getPlayer().sendMessage(MarioKart.colors.getInfo() + msg);
 		}
 		game.setUsers(users);
 		MarioKart.plugin.raceScheduler.recalculateQueues();
@@ -405,8 +390,6 @@ public class RaceExecutor {
 													+ MarioKart.msgs.get("race.end.won"));
 											p.sendMessage(MarioKart.colors.getInfo()
 													+ msg);
-										} catch (PlayerQuitException e) {
-											// Player has left
 										} catch (Exception e){
 											//Player is respawning
 										}

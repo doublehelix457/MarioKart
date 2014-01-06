@@ -1,4 +1,4 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.mariokart.MarioKart;
+import net.stormdev.mariokart.MarioKart;
 
 public class UnlockableManager {
 

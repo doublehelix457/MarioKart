@@ -1,4 +1,4 @@
-package net.stormdev.mario.mariokart;
+package net.stormdev.mariokart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,11 @@ import java.util.SortedMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import net.stormdev.mario.utils.RaceQueue;
-import net.stormdev.mario.utils.RaceTrack;
-import net.stormdev.mario.utils.RaceType;
-import net.stormdev.mario.utils.Shop;
-import net.stormdev.mario.utils.TrackCreator;
+import net.stormdev.mariokart.utils.RaceQueue;
+import net.stormdev.mariokart.utils.RaceTrack;
+import net.stormdev.mariokart.utils.RaceType;
+import net.stormdev.mariokart.utils.Shop;
+import net.stormdev.mariokart.utils.TrackCreator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,15 +21,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class URaceCommandExecutor implements CommandExecutor {
-	MarioKart plugin = null;
-
-	public URaceCommandExecutor(MarioKart plugin) {
-		this.plugin = plugin;
-	}
-
+	private static MarioKart plugin = MarioKart.getInstance();
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String alias,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		Player player = null;
 		if (sender instanceof Player) {
 			player = (Player) sender;
@@ -99,9 +93,7 @@ public class URaceCommandExecutor implements CommandExecutor {
 						page = 1;
 					}
 				}
-				@SuppressWarnings("unchecked")
-				ArrayList<RaceTrack> tracks = (ArrayList<RaceTrack>) plugin.trackManager
-						.getRaceTracks().clone();
+				ArrayList<RaceTrack> tracks = plugin.trackManager.getRaceTracks();
 				ArrayList<String> names = new ArrayList<String>();
 				for (RaceTrack track : tracks) {
 					names.add(track.getTrackName());

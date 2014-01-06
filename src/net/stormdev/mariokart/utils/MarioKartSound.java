@@ -1,4 +1,4 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 public class MarioKartSound {
 	public static final MarioKartSound BANANA_HIT = new MarioKartSound("mariokart.sfx.banana");

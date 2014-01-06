@@ -1,10 +1,10 @@
-package net.stormdev.mario.utils;
+package net.stormdev.mariokart.utils;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-import net.stormdev.mario.mariokart.Race;
-import net.stormdev.mario.mariokart.MarioKart;
+import net.stormdev.mariokart.MarioKart;
+import net.stormdev.mariokart.Race;
 
 public class DynamicLagReducer implements Runnable {
 	public static int TICK_COUNT = 0;
