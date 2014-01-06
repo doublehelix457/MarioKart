@@ -2,49 +2,29 @@ package net.stormdev.mariokart;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class User {
 	private Player player;
-
-	private String playerName = "";
-
 	private int checkpoint;
-
 	private int lapsLeft;
-
 	private ItemStack[] oldInventory;
-
 	private final int oldLevel;
-
 	private final float oldExp;
-
 	private boolean inRace;
-
 	private boolean finished;
-
 	private Location location;
-	
 	private GameMode oldGameMode;
-	
 	private boolean respawning = false;
 
 	public User(Player player) {
 		this.player = player;
-		this.playerName = player.getName();
 		this.checkpoint = 0;
 		this.lapsLeft = 3;
 		this.oldLevel = player.getLevel();
 		this.oldExp = player.getExp();
-		try {
-			this.oldGameMode = player.getGameMode();
-		} catch (Exception e) {
-			//Invalid player/they left
-			this.oldGameMode = GameMode.SURVIVAL;
-		}
+		this.oldGameMode = player.getGameMode();
 		inRace = false;
 		finished = false;
 		location = null;
@@ -63,7 +43,7 @@ public class User {
 	}
 
 	public String getPlayerName() {
-		return playerName;
+		return player.getName();
 	}
 
 	public Player getPlayer() {
@@ -81,16 +61,7 @@ public class User {
 		}
 		return player;
 	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-		return;
-	}
-
-	public OfflinePlayer getOfflinePlayer(Server server) {
-		return server.getOfflinePlayer(playerName);
-	}
-
+	
 	public void setCheckpoint(int checkpoint) {
 		this.checkpoint = checkpoint;
 	}
@@ -145,24 +116,5 @@ public class User {
 
 	public Location getLocation() {
 		return location;
-	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (!(object instanceof User)) {
-			return false;
-		}
-
-		User user = (User) object;
-
-		if (!user.getPlayerName().equals(getPlayerName())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public void clear() {
-		this.player = null;
 	}
 }

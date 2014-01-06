@@ -398,7 +398,7 @@ public class URaceCommandExecutor implements CommandExecutor {
 			if (game) {
 				User u = race.getUser(player.getName());
 				race.leave(u, true);
-				u.clear();
+				//u.clear();
 			} else {
 				RaceTrack track = queue.getTrack();
 				try {
