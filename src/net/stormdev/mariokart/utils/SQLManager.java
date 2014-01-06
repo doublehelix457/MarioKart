@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.stormdev.mariokart.MarioKart;
-import code.husky.mysql.MySQL;
+import net.stormdev.mariokart.utils.database.MySQL;
 
 public class SQLManager {
 	MySQL MySQL = null;

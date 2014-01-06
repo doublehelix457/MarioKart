@@ -1,4 +1,4 @@
-package code.husky.mysql;
+package net.stormdev.mariokart.utils.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.util.logging.Level;
 
 import org.bukkit.plugin.Plugin;
-
-import code.husky.Database;
 
 /**
  * Connects to and uses a MySQL database

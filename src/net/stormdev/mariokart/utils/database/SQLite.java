@@ -1,4 +1,4 @@
-package code.husky.sqlite;
+package net.stormdev.mariokart.utils.database;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import org.bukkit.plugin.Plugin;
-
-import code.husky.Database;
 
 /**
  * Connects to and uses a SQLite database
