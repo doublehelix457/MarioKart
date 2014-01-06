@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class User {
 	private Player player;
+	private String playerName;
 	private int checkpoint;
 	private int lapsLeft;
 	private ItemStack[] oldInventory;
@@ -28,6 +29,7 @@ public class User {
 		inRace = false;
 		finished = false;
 		location = null;
+		this.playerName = player.getName();
 	}
 	
 	public void setRespawning(Boolean respawning){
@@ -43,7 +45,7 @@ public class User {
 	}
 
 	public String getPlayerName() {
-		return player.getName();
+		return playerName;
 	}
 
 	public Player getPlayer() {
